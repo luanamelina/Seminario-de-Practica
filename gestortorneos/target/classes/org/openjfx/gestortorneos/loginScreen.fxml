@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.gestortorneos.MiscController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="720.0" prefWidth="406.0" style="-fx-background-color: #921415;">
+         <children>
+            <ImageView fitHeight="461.0" fitWidth="393.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/logo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Pane layoutX="406.0" prefHeight="720.0" prefWidth="874.0" style="-fx-background-color: #000000;">
+         <children>
+            <VBox alignment="CENTER" layoutX="326.0" layoutY="7.0" prefHeight="711.0" prefWidth="354.0" spacing="50.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="401.0" text="Usuario" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold Italic" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtUsuarioLogin"/>
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="401.0" text="Contraseña" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold Italic" size="14.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="pssPassword"/>
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="247.0" text="Iniciar Sesión" textAlignment="CENTER" onAction="#iniciarSesion">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="149.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/millenium0.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

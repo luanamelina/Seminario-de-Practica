@@ -1,0 +1,11 @@
+org\openjfx\gestortorneos\App.class
+org\openjfx\gestortorneos\MiscModel.class
+org\openjfx\gestortorneos\MiscController.class
+org\openjfx\gestortorneos\UserController$1.class
+module-info.class
+org\openjfx\gestortorneos\UsuarioRow.class
+org\openjfx\gestortorneos\DuelController.class
+org\openjfx\gestortorneos\UserController.class
+org\openjfx\gestortorneos\DatabaseController.class
+org\openjfx\gestortorneos\DuelModel.class
+org\openjfx\gestortorneos\UserModel.class
