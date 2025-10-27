@@ -235,6 +235,11 @@ ALTER TABLE `ronda`
   ADD CONSTRAINT `ronda_ibfk_1` FOREIGN KEY (`torneo_id`) REFERENCES `torneo` (`id`);
 COMMIT;
 
+--
+-- Volcado Inicial Admin
+--
+INSERT INTO `usuario` (`id`, `nombres`, `apellidos`, `email`, `usuario`, `password_hash`, `es_admin`, `activo`) VALUES (NULL, 'Test', 'Usuario', 'test@email.com', 'user', 'admin', '1', '1');
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
