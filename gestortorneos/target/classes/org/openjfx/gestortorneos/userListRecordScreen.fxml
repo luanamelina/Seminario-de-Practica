@@ -28,14 +28,17 @@
             <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="115.0" prefHeight="589.0" prefWidth="855.0" spacing="20.0">
                <children>
                   <TableView fx:id="tblUsuarios" prefHeight="634.0" prefWidth="855.0">
+                    <columnResizePolicy>
+                      <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
                     <columns>
                       <TableColumn fx:id="colNombres" prefWidth="120.0" text="Nombres"/>
                       <TableColumn fx:id="colApellidos" prefWidth="120.0" text="Apellidos"/>
                       <TableColumn fx:id="colEmail" prefWidth="160.0" text="Email"/>
                       <TableColumn fx:id="colAdmin" prefWidth="110.0" text="Admin"/>
                       <TableColumn fx:id="colUsuario" prefWidth="110.0" text="Usuario"/>
-                      <TableColumn fx:id="colActivo" prefWidth="80.0"  text="Activo"/>
-                      <TableColumn fx:id="colEditar" prefWidth="70.0"  text="Editar"/>
+                      <TableColumn fx:id="colActivo" prefWidth="80.0"  text=""/>
+                      <TableColumn fx:id="colEditar" prefWidth="70.0"  text=""/>
                       <TableColumn fx:id="colToggle" prefWidth="110.0" text=""/>
                     </columns>
                   </TableView>

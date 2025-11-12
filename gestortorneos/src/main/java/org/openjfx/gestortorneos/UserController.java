@@ -28,6 +28,12 @@ public class UserController {
     @FXML private TextField txtUsuario;
     @FXML private TextField txtPassword;
     
+    //Form Editar Usuario
+    @FXML private TextField editNombres;
+    @FXML private TextField editApellidos;
+    @FXML private TextField editEmail;
+    @FXML private TextField editId;
+    
     //Tabla Usuarios
     @FXML private AnchorPane userListRecord;
     @FXML private TableView<UsuarioRow> tblUsuarios;
@@ -52,6 +58,10 @@ public class UserController {
     @FXML
     public void abrirListadoUsuario() throws IOException {
         App.setRoot("userListRecordScreen");
+    }
+    @FXML
+    public void abrirEditarUsuario() throws IOException {
+        App.setRoot("userEditRecordScreen");
     }
     
     //Funciones Forms
@@ -94,6 +104,39 @@ public class UserController {
         }
     }
     
+    @FXML
+    private void editarUsuario() {
+        Integer id = Integer.parseInt(editId.getText());
+        String nombres = editNombres.getText().trim();
+        String apellidos = editApellidos.getText().trim();
+        String email = editEmail.getText().trim();
+
+        if (nombres.isEmpty() || apellidos.isEmpty() || email.isEmpty()) {
+            MiscController.alert(Alert.AlertType.WARNING, "Campos incompletos",
+                    "Completá todos los campos.");
+            return;
+        }
+
+        try {
+            int filas = UserModel.editarUsuario(
+                   id, nombres, apellidos, email
+            );
+
+            if (filas > 0) {
+                MiscController.alert(Alert.AlertType.INFORMATION, "Éxito",
+                        "Usuario editado correctamente.");
+                limpiarFormularioEditar();
+                abrirListadoUsuario();
+            } else {
+                MiscController.alert(Alert.AlertType.WARNING, "Aviso",
+                        "No se editó ningún registro.");
+            }
+        } catch (Exception e) {
+            MiscController.alert(Alert.AlertType.ERROR, "Error",
+                    "Ocurrió un error al editar el usuario:\n" + e.getMessage());
+        }
+    }
+    
     private void limpiarFormulario() {
         txtNombres.clear();
         txtApellidos.clear();
@@ -102,6 +145,13 @@ public class UserController {
         txtPassword.clear();
         chkEsAdmin.setSelected(false);
     }
+    
+    private void limpiarFormularioEditar() {
+        editNombres.clear();
+        editApellidos.clear();
+        editEmail.clear();
+    }
+    
     
     @FXML
     private final javafx.collections.ObservableList<UsuarioRow> datos =
@@ -123,7 +173,14 @@ public class UserController {
         colActivo.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().isActivo() ? "Sí" : "No") );
 
         addButtonToColumn(colEditar, "Editar", row -> {
-            System.out.println("Editar usuario id=" + row.getId());
+            try {
+                UserModel.usuarioEnEdicion = row;
+                abrirEditarUsuario();
+            } catch (IOException e) {
+                e.printStackTrace();
+                MiscController.alert(Alert.AlertType.ERROR, "Error",
+                        "No se pudo abrir la pantalla de edición:\n" + e.getMessage());
+            }
         });
 
         addButtonToColumn(colToggle, "Activar/Desactivar", row -> {
@@ -140,8 +197,18 @@ public class UserController {
         });
 
         cargarUsuarios();
-        tblUsuarios.setItems(datos);
-    } }
+        tblUsuarios.setItems(datos); 
+    } 
+        if (editNombres != null) {     
+            UsuarioRow u = UserModel.usuarioEnEdicion;
+            if (u != null) {
+                editId.setText(String.valueOf(u.getId()));
+                editNombres.setText(u.getNombres());
+                editApellidos.setText(u.getApellidos());
+                editEmail.setText(u.getEmail());
+            }
+        }
+    }
     
     private void cargarUsuarios() {
         datos.clear();

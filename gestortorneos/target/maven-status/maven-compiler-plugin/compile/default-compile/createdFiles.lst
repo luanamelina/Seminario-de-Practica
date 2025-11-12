@@ -1,5 +1,7 @@
+org\openjfx\gestortorneos\DuelRow.class
 org\openjfx\gestortorneos\App.class
 org\openjfx\gestortorneos\MiscModel.class
+org\openjfx\gestortorneos\DuelController$1.class
 org\openjfx\gestortorneos\MiscController.class
 org\openjfx\gestortorneos\UserController$1.class
 module-info.class

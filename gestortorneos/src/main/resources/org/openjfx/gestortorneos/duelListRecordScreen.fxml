@@ -25,15 +25,21 @@
          <children>
             <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="115.0" prefHeight="589.0" prefWidth="855.0" spacing="20.0">
                <children>
-                  <TableView prefHeight="634.0" prefWidth="855.0">
+                  <TableView fx:id="tblTorneos" prefHeight="634.0" prefWidth="855.0">
+                    <columnResizePolicy>
+                      <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
                     <columns>
-                      <TableColumn prefWidth="75.0" text="Nombre" />
-                      <TableColumn prefWidth="75.0" text="Modalidad" />
-                        <TableColumn prefWidth="75.0" text="Fecha Inicio" />
-                        <TableColumn prefWidth="75.0" text="Num Jugadores" />
-                        <TableColumn prefWidth="75.0" text="Estado" />
-                        <TableColumn prefWidth="75.0" text=" " />
-                        <TableColumn prefWidth="75.0" text=" " />
+                      <TableColumn fx:id="colNombre"        text="Nombre"/>
+                      <TableColumn fx:id="colModalidad"     text="Modalidad"/>
+                      <TableColumn fx:id="colEstado"        text="Estado"/>
+                      <TableColumn fx:id="colInicio"        text="Inicio"/>
+                      <TableColumn fx:id="colMaxJugadores"  text="Jugadores"/>
+                      <TableColumn fx:id="colActivo"        text="Activo"/>
+                      <TableColumn fx:id="colVer"           text=""/>
+                      <TableColumn fx:id="colInscribir"     text=""/>
+                      <TableColumn fx:id="colEditar"        text=""/>
+                      <TableColumn fx:id="colToggle"        text=""/>
                     </columns>
                   </TableView>
                </children>
