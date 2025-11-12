@@ -14,9 +14,8 @@ DROP PROCEDURE IF EXISTS sp_Torneo_Editar$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Torneo_Editar`(
     IN `in_id` INT(11),
-    IN `in_nombres` VARCHAR(80),
-    IN `in_apellidos` VARCHAR(80),
-    IN `in_email` VARCHAR(120)
+    IN `in_nombre` VARCHAR(120),
+    IN `in_inicio` DATETIME
 ) MODIFIES SQL DATA
 
 BEGIN
@@ -27,11 +26,10 @@ BEGIN
     END;
 
     START TRANSACTION;
-        UPDATE usuario
+        UPDATE torneo
         SET
-            nombres = in_nombres,
-            apellidos = in_apellidos,
-            email = in_email
+            nombre = in_nombre,
+            inicio = in_inicio
         WHERE id = in_id;
 
         SELECT ROW_COUNT() AS 'ROW_COUNT';
