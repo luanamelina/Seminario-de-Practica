@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="userListRecord" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.gestortorneos.UserController">
+<AnchorPane fx:id="registrationScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.gestortorneos.DuelController">
    <children>
       <VBox alignment="CENTER" prefHeight="720.0" prefWidth="406.0" style="-fx-background-color: #921415;">
          <children>
@@ -24,32 +24,30 @@
       </VBox>
       <Pane layoutX="406.0" prefHeight="720.0" prefWidth="874.0" style="-fx-background-color: #000000;">
          <children>
-            <Button layoutX="667.0" layoutY="73.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="193.0" text="Crear Usuario" onAction="#abrirCrearUsuario"/>
+           
             <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="115.0" prefHeight="589.0" prefWidth="855.0" spacing="20.0">
                <children>
-                  <TableView fx:id="tblUsuarios" prefHeight="634.0" prefWidth="855.0">
+                  <TableView fx:id="tblJugadores" prefHeight="634.0" prefWidth="855.0">
                     <columnResizePolicy>
                       <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                     <columns>
-                      <TableColumn fx:id="colNombres" prefWidth="120.0" text="Nombres"/>
-                      <TableColumn fx:id="colApellidos" prefWidth="120.0" text="Apellidos"/>
-                      <TableColumn fx:id="colEmail" prefWidth="160.0" text="Email"/>
-                      <TableColumn fx:id="colAdmin" prefWidth="110.0" text="Admin"/>
-                      <TableColumn fx:id="colUsuario" prefWidth="110.0" text="Usuario"/>
-                      <TableColumn fx:id="colActivo" prefWidth="80.0"  text="Activo"/>
-                      <TableColumn fx:id="colEditar" prefWidth="70.0"  text=""/>
-                      <TableColumn fx:id="colToggle" prefWidth="110.0" text=""/>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                        <TableColumn fx:id="colNombres" text="Nombres" prefWidth="160"/>
+                        <TableColumn fx:id="colApellidos" text="Apellidos" prefWidth="160"/>
+                        <TableColumn fx:id="colEmail" text="Email" prefWidth="200"/>
+                        <TableColumn fx:id="colInscripto" text="Inscripto" prefWidth="100"/>
+                        <TableColumn fx:id="colAccion" text="" prefWidth="120"/>
                     </columns>
-                  </TableView>
+                </TableView>
                </children>
             </VBox>
-            <ImageView fitHeight="53.0" fitWidth="46.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#menuMain">
+            <ImageView fitHeight="53.0" fitWidth="46.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#abrirListadoTorneo">
                <image>
                   <Image url="@assets/back.png" />
                </image>
             </ImageView>
-            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="459.0" layoutY="20.0" prefHeight="17.0" prefWidth="401.0" text="Usuarios" textAlignment="RIGHT" textFill="WHITE">
+            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="459.0" layoutY="20.0" prefHeight="17.0" prefWidth="401.0" text="Jugadores" textAlignment="RIGHT" textFill="WHITE">
                <font>
                   <Font name="System Bold Italic" size="24.0" />
                </font>

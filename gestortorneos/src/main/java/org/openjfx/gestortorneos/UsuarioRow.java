@@ -17,6 +17,7 @@ public class UsuarioRow {
     private boolean esAdmin;
     private String usuario;
     private boolean activo;
+    private String inscripto = "No";
 
     public UsuarioRow(long id, String nombres, String apellidos, String email,
                       boolean esAdmin, String usuario, boolean activo) {
@@ -36,7 +37,7 @@ public class UsuarioRow {
     public boolean isEsAdmin() { return esAdmin; }
     public String getUsuario() { return usuario; }
     public boolean isActivo() { return activo; }
-
     public void setActivo(boolean activo) { this.activo = activo; }
-    
+    public String getInscripto() { return inscripto; }
+    public void setInscripto(String inscripto) { this.inscripto = inscripto; }
 }

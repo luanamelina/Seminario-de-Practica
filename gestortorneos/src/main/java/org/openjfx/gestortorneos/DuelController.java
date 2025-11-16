@@ -5,15 +5,23 @@
 package org.openjfx.gestortorneos;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 /**
@@ -21,6 +29,15 @@ import javafx.util.Callback;
  * @author luana
  */
 public class DuelController {
+    
+    //Tabla Inscribir Jugadores
+    @FXML private TableView<UsuarioRow> tblJugadores;
+    @FXML private TableColumn<UsuarioRow, Long> colId;
+    @FXML private TableColumn<UsuarioRow, String> colNombres;
+    @FXML private TableColumn<UsuarioRow, String> colApellidos;
+    @FXML private TableColumn<UsuarioRow, String> colEmail;
+    @FXML private TableColumn<UsuarioRow, Void> colAccion;
+    @FXML private TableColumn<UsuarioRow, String> colInscripto;
     
     //Form Crear Torneo
     @FXML private TextField txtNombreTorneo;
@@ -44,12 +61,14 @@ public class DuelController {
     @FXML private TableColumn<DuelRow, String> colMaxJugadores;
     @FXML private TableColumn<DuelRow, String> colActivo;
     @FXML private TableColumn<DuelRow, Void>   colEditar;
-    @FXML private TableColumn<DuelRow, Void>   colVer;
+    @FXML private TableColumn<DuelRow, Void>   colAccionIniciar;
     @FXML private TableColumn<DuelRow, Void>   colInscribir;
     @FXML private TableColumn<DuelRow, Void>   colToggle;
     
     private final ObservableList<DuelRow> datos = FXCollections.observableArrayList();
     private final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    
+    private long torneoId;
     
     //Funciones UI
     @FXML
@@ -79,98 +98,166 @@ public class DuelController {
     
     //Funciones Forms
     @FXML
-private void initialize() {
+    private void initialize() {
 
-    if (duelNewRecord != null) {
-        cmbModalidad.getItems().setAll("SUIZO", "ROUND_ROBIN", "BRACKET");
-
-        cmbModalidad.valueProperty().addListener((obs, oldVal, nueva) -> {
-            if (nueva == null) {
-                lblRecomendacion.setText("");
-                return;
+        if (tblJugadores != null) {
+            DuelRow torneo = DuelModel.torneoEnEdicion;
+            if (torneo != null) {
+                this.torneoId = torneo.getId();
+                cargarUsuariosActivos();
             }
-            switch (nueva) {
-                case "BRACKET":
-                    lblRecomendacion.setText("Recomendación: potencia de 2 (8, 16, 32...).");
-                    break;
-                case "SUIZO":
-                    lblRecomendacion.setText("Recomendación: flexible (8+ jugadores).");
-                    break;
-                case "ROUND_ROBIN":
-                    lblRecomendacion.setText("Recomendación: grupos pequeños (4–10 es cómodo).");
-                    break;
-                default:
+        }
+
+        if (duelNewRecord != null) {
+            cmbModalidad.getItems().setAll("SUIZO", "ROUND_ROBIN", "BRACKET");
+
+            cmbModalidad.valueProperty().addListener((obs, oldVal, nueva) -> {
+                if (nueva == null) {
                     lblRecomendacion.setText("");
+                    return;
+                }
+                switch (nueva) {
+                    case "BRACKET":
+                        lblRecomendacion.setText("Recomendación: potencia de 2 (8, 16, 32...).");
+                        break;
+                    case "SUIZO":
+                        lblRecomendacion.setText("Recomendación: flexible (8+ jugadores).");
+                        break;
+                    case "ROUND_ROBIN":
+                        lblRecomendacion.setText("Recomendación: grupos pequeños (4–10 es cómodo).");
+                        break;
+                    default:
+                        lblRecomendacion.setText("");
+                }
+            });
+        }
+
+        if (tblTorneos != null) {
+            colNombre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre()));
+            colModalidad.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getModalidad()));
+            colEstado.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEstado()));
+            colInicio.setCellValueFactory(c -> {
+                var dt = c.getValue().getInicio();
+                String s = (dt == null) ? "" : FMT.format(dt);
+                return new javafx.beans.property.SimpleStringProperty(s);
+            });
+            colMaxJugadores.setCellValueFactory(c -> {
+                Integer n = c.getValue().getMaxJugadores();
+                return new javafx.beans.property.SimpleStringProperty(n == null ? "" : String.valueOf(n));
+            });
+            colActivo.setCellValueFactory(c ->
+                    new javafx.beans.property.SimpleStringProperty(c.getValue().isActivo() ? "Sí" : "No"));
+
+            addButtonToColumnDuel(colEditar, "Editar", row -> {
+                try {
+                    DuelModel.torneoEnEdicion = row;
+                    abrirEditarTorneo();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    MiscController.alert(Alert.AlertType.ERROR, "Error",
+                            "No se pudo abrir la pantalla de edición:\n" + e.getMessage());
+                }
+            });
+
+            addButtonToColumnDuel(colInscribir, "Jugadores", row -> {
+                try {
+                    DuelModel.torneoEnEdicion = row;
+                    App.setRoot("registrationScreen");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    MiscController.alert(Alert.AlertType.ERROR, "Error",
+                            "No se pudo abrir la pantalla de inscripción:\n" + e.getMessage());
+                }
+            });
+
+            addButtonToColumnDuel(colToggle, "Activar/Desactivar", row -> {
+                try {
+                    boolean nuevo = !row.isActivo();
+                    DuelModel.cambiarEstadoActivo(row.getId(), nuevo);
+                    row.setActivo(nuevo);
+                    tblTorneos.refresh();
+                    MiscController.alert(Alert.AlertType.INFORMATION, "Estado actualizado",
+                            "El torneo ahora está " + (nuevo ? "Activo" : "Inactivo") + ".");
+                } catch (SQLException e) {
+                    MiscController.alert(Alert.AlertType.ERROR, "Error",
+                            "No se pudo actualizar el estado:\n" + e.getMessage());
+                }
+            });
+
+            colAccionIniciar.setCellFactory(col -> new TableCell<>() {
+                private final Button btn = new Button();
+                {
+                    btn.setOnAction(e -> {
+                        DuelRow row = getTableView().getItems().get(getIndex());
+                        manejarAccionTorneo(row);
+                    });
+                }
+
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                        return;
+                    }
+                    DuelRow row = getTableView().getItems().get(getIndex());
+                    if ("PENDIENTE".equalsIgnoreCase(row.getEstado())) {
+                        btn.setText("Iniciar");
+                    } else {
+                        btn.setText("Ver");
+                    }
+                    setGraphic(btn);
+                }
+            });
+
+
+            cargarTorneos();
+            tblTorneos.setItems(datos);
+        }
+
+        if (editNombreTorneo != null) {
+            DuelRow t = DuelModel.torneoEnEdicion;
+            if (t != null) {
+                editIdDuel.setText(String.valueOf(t.getId()));
+                editNombreTorneo.setText(t.getNombre());
+                editInicio.setValue(t.getInicio() != null ? t.getInicio().toLocalDate() : null);
             }
-        });
-    }
-
-    if (tblTorneos != null) {
-        colNombre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre()));
-        colModalidad.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getModalidad()));
-        colEstado.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEstado()));
-        colInicio.setCellValueFactory(c -> {
-            var dt = c.getValue().getInicio();
-            String s = (dt == null) ? "" : FMT.format(dt);
-            return new javafx.beans.property.SimpleStringProperty(s);
-        });
-        colMaxJugadores.setCellValueFactory(c -> {
-            Integer n = c.getValue().getMaxJugadores();
-            return new javafx.beans.property.SimpleStringProperty(n == null ? "" : String.valueOf(n));
-        });
-        colActivo.setCellValueFactory(c ->
-                new javafx.beans.property.SimpleStringProperty(c.getValue().isActivo() ? "Sí" : "No"));
-
-        addButtonToColumnDuel(colEditar, "Editar", row -> {
-            try {
-                DuelModel.torneoEnEdicion = row;
-                abrirEditarTorneo();
-            } catch (IOException e) {
-                e.printStackTrace();
-                MiscController.alert(Alert.AlertType.ERROR, "Error",
-                        "No se pudo abrir la pantalla de edición:\n" + e.getMessage());
-            }
-            
-        });
-        
-        addButtonToColumnDuel(colVer, "Ver", row -> {
-            System.out.println("Editar torneo id=" + row.getId());
-            // App.setRoot("duelEditRecordScreen");
-        });
-        
-        addButtonToColumnDuel(colInscribir, "Inscribir Jugadores", row -> {
-            System.out.println("Editar torneo id=" + row.getId());
-            // App.setRoot("duelEditRecordScreen");
-        });
-
-        addButtonToColumnDuel(colToggle, "Activar/Desactivar", row -> {
-            try {
-                boolean nuevo = !row.isActivo();
-                DuelModel.cambiarEstadoActivo(row.getId(), nuevo);
-                row.setActivo(nuevo);
-                tblTorneos.refresh();
-                MiscController.alert(Alert.AlertType.INFORMATION, "Estado actualizado",
-                        "El torneo ahora está " + (nuevo ? "Activo" : "Inactivo") + ".");
-            } catch (SQLException e) {
-                MiscController.alert(Alert.AlertType.ERROR, "Error",
-                        "No se pudo actualizar el estado:\n" + e.getMessage());
-            }
-        });
-
-        cargarTorneos();
-        tblTorneos.setItems(datos);
-    }
-    
-    if (editNombreTorneo != null) {
-        DuelRow t = DuelModel.torneoEnEdicion;
-        if (t != null) {
-            editIdDuel.setText(String.valueOf(t.getId()));
-            editNombreTorneo.setText(t.getNombre());
-            editInicio.setValue(t.getInicio() != null ? t.getInicio().toLocalDate() : null);
         }
     }
 
-}
+    @FXML
+    private void manejarAccionTorneo(DuelRow row) {
+        try {
+            DuelModel.torneoEnEdicion = row;
+            if ("PENDIENTE".equalsIgnoreCase(row.getEstado())) {
+                DuelModel.iniciarTorneo(row.getId());
+                row.setEstado("EN_CURSO");
+                tblTorneos.refresh();
+            }
+            abrirVistaTorneo(row);
+
+        } catch (SQLException e) {
+           
+        } catch (IOException e) {
+            MiscController.alert(Alert.AlertType.ERROR, "Error de navegación",
+                    "No se pudo abrir la vista del torneo:\n" + e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void abrirVistaTorneo(DuelRow row) throws IOException {
+        String mod = row.getModalidad();
+        if ("SUIZO".equalsIgnoreCase(mod)) {
+            App.setRoot("duelMatchesSwissScreen");
+        } else if ("ROUND_ROBIN".equalsIgnoreCase(mod)) {
+            App.setRoot("duelMatchesRrScreen");
+        } else if ("BRACKET".equalsIgnoreCase(mod)) {
+            App.setRoot("duelMatchesBracketScreen");
+        } else {
+            MiscController.alert(Alert.AlertType.WARNING, "Modalidad desconocida",
+                    "Modalidad no soportada: " + mod);
+        }
+    }
     
     @FXML
     private void guardarTorneoNuevo() {
@@ -179,7 +266,6 @@ private void initialize() {
         LocalDate fechaInicio = dpInicio.getValue();
         String maxTxt = txtMaxJugadores.getText().trim();
 
-        // Validaciones básicas
         if (nombre.isEmpty() || modalidad == null || modalidad.isEmpty()) {
             MiscController.alert(Alert.AlertType.WARNING, "Campos incompletos",
                     "Completá al menos Nombre y Modalidad.");
@@ -284,6 +370,80 @@ private void initialize() {
         };
         column.setCellFactory(factory);
     }
+
+    public void setTorneoId(long id) {
+        this.torneoId = id;
+        cargarUsuariosActivos();
+    }
+
+    private void cargarUsuariosActivos() {
+        ObservableList<UsuarioRow> lista = FXCollections.observableArrayList();
+        try {
+            List<UsuarioRow> usuarios = UserModel.listarUsuarios();
+                List<Long> inscriptos = new ArrayList<>();
+                String sql = "SELECT usuario_id FROM inscripcion WHERE torneo_id = ? AND activo = 1";
+                try (PreparedStatement ps = DatabaseController.conexion.prepareStatement(sql)) {
+                    ps.setLong(1, torneoId);
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        inscriptos.add(rs.getLong("usuario_id"));
+                    }
+                }
+                for (UsuarioRow u : usuarios) {
+                    if (u.isActivo()) {
+                        String estado = inscriptos.contains(u.getId()) ? "Sí" : "No";
+                        u.setInscripto(estado);
+                        lista.add(u);
+                    }
+                }
+
+            } catch (SQLException e) {
+                MiscController.alert(Alert.AlertType.ERROR, "Error",
+                        "No se pudo cargar el listado de usuarios:\n" + e.getMessage());
+            }
+            colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colNombres.setCellValueFactory(new PropertyValueFactory<>("nombres"));
+            colApellidos.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
+            colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+            colInscripto.setCellValueFactory(new PropertyValueFactory<>("inscripto"));
+
+            agregarBotonInscribir();
+            tblJugadores.setItems(lista);
+    }
+
+
+    private void agregarBotonInscribir() {
+        colAccion.setCellFactory(param -> new TableCell<>() {
+            private final Button btn = new Button("Inscribir");
+            {
+                btn.setOnAction(e -> {
+                    UsuarioRow usuario = getTableView().getItems().get(getIndex());
+                    inscribirJugador(usuario.getId());
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : btn);
+            }
+        });
+    }
+
+    private void inscribirJugador(long usuarioId) {
+        try {
+            int filas = DuelModel.registrarJugador(torneoId, usuarioId);
+            if (filas > 0) {
+                MiscController.alert(Alert.AlertType.INFORMATION, "Éxito",
+                        "Jugador inscrito correctamente.");
+            } else {
+                MiscController.alert(Alert.AlertType.WARNING, "Aviso",
+                        "No se realizó la inscripción. El jugador ya estaba inscrito o el torneo está lleno.");
+            }
+        } catch (Exception e) {
+            MiscController.alert(Alert.AlertType.ERROR, "Error",
+                    "Error al inscribir jugador:\n" + e.getMessage());
+        }
+    }
     
     private void limpiarFormularioTorneo() {
         txtNombreTorneo.clear();
@@ -299,5 +459,6 @@ private void initialize() {
         editIdDuel.clear();
     }
     
+        
     
 }

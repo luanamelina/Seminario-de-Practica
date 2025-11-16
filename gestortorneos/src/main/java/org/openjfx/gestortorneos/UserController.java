@@ -152,53 +152,49 @@ public class UserController {
         editEmail.clear();
     }
     
-    
     @FXML
     private final javafx.collections.ObservableList<UsuarioRow> datos =
         javafx.collections.FXCollections.observableArrayList();
     
     @FXML
     private void initialize() {
-        /*if (tblUsuarios == null) {
-            throw new IllegalStateException("Faltan fx:id en el FXML para la tabla/columnas.");
-        }*/
         
         if (userListRecord != null && "userListRecord".equals(userListRecord.getId())) {
+            
+            colNombres.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombres()) );
+            colApellidos.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getApellidos()) );
+            colEmail.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEmail()) );
+            colUsuario.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getUsuario()) );
+            colAdmin.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().isEsAdmin() ? "Sí" : "No") );
+            colActivo.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().isActivo() ? "Sí" : "No") );
 
-        colNombres.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombres()) );
-        colApellidos.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getApellidos()) );
-        colEmail.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEmail()) );
-        colUsuario.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getUsuario()) );
-        colAdmin.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().isEsAdmin() ? "Sí" : "No") );
-        colActivo.setCellValueFactory( c -> new javafx.beans.property.SimpleStringProperty(c.getValue().isActivo() ? "Sí" : "No") );
+            addButtonToColumn(colEditar, "Editar", row -> {
+                try {
+                    UserModel.usuarioEnEdicion = row;
+                    abrirEditarUsuario();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    MiscController.alert(Alert.AlertType.ERROR, "Error",
+                            "No se pudo abrir la pantalla de edición:\n" + e.getMessage());
+                }
+            });
 
-        addButtonToColumn(colEditar, "Editar", row -> {
-            try {
-                UserModel.usuarioEnEdicion = row;
-                abrirEditarUsuario();
-            } catch (IOException e) {
-                e.printStackTrace();
-                MiscController.alert(Alert.AlertType.ERROR, "Error",
-                        "No se pudo abrir la pantalla de edición:\n" + e.getMessage());
-            }
-        });
+            addButtonToColumn(colToggle, "Activar/Desactivar", row -> {
+                try {
+                    boolean nuevo = !row.isActivo();
+                    UserModel.cambiarEstadoUsuario(row.getId(), nuevo);
+                    row.setActivo(nuevo);
+                    tblUsuarios.refresh();
+                    MiscController.alert(Alert.AlertType.INFORMATION, "Estado actualizado",
+                            "El usuario ahora está " + (nuevo ? "Activo" : "Inactivo") + ".");
+                } catch (SQLException e) {
+                    MiscController.alert(Alert.AlertType.ERROR, "Error", "No se pudo actualizar el estado:\n" + e.getMessage());
+                }
+            });
 
-        addButtonToColumn(colToggle, "Activar/Desactivar", row -> {
-            try {
-                boolean nuevo = !row.isActivo();
-                UserModel.cambiarEstadoUsuario(row.getId(), nuevo);
-                row.setActivo(nuevo);
-                tblUsuarios.refresh();
-                MiscController.alert(Alert.AlertType.INFORMATION, "Estado actualizado",
-                        "El usuario ahora está " + (nuevo ? "Activo" : "Inactivo") + ".");
-            } catch (SQLException e) {
-                MiscController.alert(Alert.AlertType.ERROR, "Error", "No se pudo actualizar el estado:\n" + e.getMessage());
-            }
-        });
-
-        cargarUsuarios();
-        tblUsuarios.setItems(datos); 
-    } 
+            cargarUsuarios();
+            tblUsuarios.setItems(datos); 
+        } 
         if (editNombres != null) {     
             UsuarioRow u = UserModel.usuarioEnEdicion;
             if (u != null) {

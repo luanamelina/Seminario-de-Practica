@@ -34,9 +34,9 @@
                       <TableColumn fx:id="colModalidad"     text="Modalidad"/>
                       <TableColumn fx:id="colEstado"        text="Estado"/>
                       <TableColumn fx:id="colInicio"        text="Inicio"/>
-                      <TableColumn fx:id="colMaxJugadores"  text="Jugadores"/>
+                      <TableColumn fx:id="colMaxJugadores"  text="Cupo Máximo"/>
                       <TableColumn fx:id="colActivo"        text="Activo"/>
-                      <TableColumn fx:id="colVer"           text=""/>
+                      <TableColumn fx:id="colAccionIniciar"        text=""/>
                       <TableColumn fx:id="colInscribir"     text=""/>
                       <TableColumn fx:id="colEditar"        text=""/>
                       <TableColumn fx:id="colToggle"        text=""/>

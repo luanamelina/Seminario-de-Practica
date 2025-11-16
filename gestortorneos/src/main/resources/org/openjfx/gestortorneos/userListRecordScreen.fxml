@@ -37,7 +37,7 @@
                       <TableColumn fx:id="colEmail" prefWidth="160.0" text="Email"/>
                       <TableColumn fx:id="colAdmin" prefWidth="110.0" text="Admin"/>
                       <TableColumn fx:id="colUsuario" prefWidth="110.0" text="Usuario"/>
-                      <TableColumn fx:id="colActivo" prefWidth="80.0"  text=""/>
+                      <TableColumn fx:id="colActivo" prefWidth="80.0"  text="Activo"/>
                       <TableColumn fx:id="colEditar" prefWidth="70.0"  text=""/>
                       <TableColumn fx:id="colToggle" prefWidth="110.0" text=""/>
                     </columns>

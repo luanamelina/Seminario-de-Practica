@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="duelEditRecordScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.gestortorneos.MatchController">
+   <children>
+        <VBox alignment="CENTER" prefHeight="720.0" prefWidth="406.0"
+              style="-fx-background-color: #921415;">
+            <children>
+                <ImageView fitHeight="461.0" fitWidth="393.0"
+                           pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@assets/logo.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </VBox>
+
+        <Pane layoutX="406.0" prefHeight="720.0" prefWidth="874.0"
+              style="-fx-background-color: #000000;">
+            <children>
+
+                <Label fx:id="lblTorneoTitulo" 
+                       alignment="CENTER_LEFT"
+                       layoutX="70.0" layoutY="20.0"
+                       prefHeight="30.0" prefWidth="600.0"
+                       text="Torneo Suizo"
+                       textFill="WHITE">
+                    <font>
+                        <Font name="System Bold Italic" size="24.0" />
+                    </font>
+                </Label>
+
+                <Label layoutX="70.0" layoutY="55.0"
+                       prefHeight="20.0" prefWidth="600.0"
+                       text="Bracket. Eliminación directa."
+                       textFill="WHITE" wrapText="true">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
+
+                <Button layoutX="750.0" layoutY="30.0"
+                        mnemonicParsing="false"
+                        prefHeight="25.0" prefWidth="100.0"
+                        text="Clasificación"
+                        onAction="#abrirClasificacion">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                
+                <Button layoutX="700.0" layoutY="65.0"
+                        mnemonicParsing="false"
+                        prefHeight="25.0" prefWidth="150.0"
+                        text="Generar Nueva Ronda"
+                        onAction="#generarSiguienteRonda">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                
+                 <ImageView fitHeight="53.0" fitWidth="46.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#volverListadoTorneos">
+                    <image>
+                       <Image url="@assets/back.png" />
+                    </image>
+                 </ImageView>
+
+                <TableView fx:id="tblMatches"
+                           layoutX="20.0" layoutY="100.0"
+                           prefHeight="600.0" prefWidth="834.0">
+                    <columns>
+                        <TableColumn fx:id="colMRonda"    prefWidth="70.0"  text="Ronda"/>
+                        <TableColumn fx:id="colMMesa"     prefWidth="70.0"  text="Mesa"/>
+                        <TableColumn fx:id="colMJugadorA" prefWidth="180.0" text="Jugador A"/>
+                        <TableColumn fx:id="colMJugadorB" prefWidth="180.0" text="Jugador B"/>
+                        <TableColumn fx:id="colMResultado" prefWidth="120.0" text="Resultado"/>
+                        <TableColumn fx:id="colMEstado"   prefWidth="100.0" text="Estado"/>
+                        <TableColumn fx:id="colMRegistrar" prefWidth="110.0" text="Acción"/>
+                    </columns>
+                </TableView>
+
+            </children>
+        </Pane>
+    </children>
+</AnchorPane>

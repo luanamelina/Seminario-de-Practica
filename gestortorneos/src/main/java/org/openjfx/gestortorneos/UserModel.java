@@ -34,7 +34,6 @@ public class UserModel {
             cs.setString(5, passwordHash);
             cs.setBoolean(6, esAdmin);
             
-
             boolean hasResult = cs.execute();
 
             if (hasResult) {
@@ -54,7 +53,6 @@ public class UserModel {
         } catch (SQLException e) {
             System.err.println("Error al crear usuario: " + e.getMessage());
         }
-
         return rowCount;
     }
     
@@ -91,10 +89,8 @@ public class UserModel {
         } catch (SQLException e) {
             System.err.println("Error al editar usuario: " + e.getMessage());
         }
-
         return rowCount;
     }
-    
     
     public static List<UsuarioRow> listarUsuarios() throws SQLException {
         List<UsuarioRow> usuarios = new ArrayList<>();
